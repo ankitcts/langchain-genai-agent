@@ -1,8 +1,13 @@
+import os
+from dotenv import load_dotenv
 from langchain_ibm import ChatWatsonx
 from langchain_core.prompts import PromptTemplate
-from config import PARAMETERS,CREDENTIALS, LLAMA_MODEL_ID, GRANITE_MODEL_ID, MISTRAL_MODEL_ID
+from config import PARAMETERS, LLAMA_MODEL_ID, GRANITE_MODEL_ID, MISTRAL_MODEL_ID
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
+
+# Load .env file
+load_dotenv()
 
 # Define JSON output structure
 class AIResponse(BaseModel):
@@ -10,18 +15,16 @@ class AIResponse(BaseModel):
     sentiment: int = Field(description="Sentiment score from 0 (negative) to 100 (positive)")
     response: str = Field(description="Suggested response to the user")
 
-
 # JSON output parser
 json_parser = JsonOutputParser(pydantic_object=AIResponse)
-
 
 
 def initialize_model(model_id):
     return ChatWatsonx(
         model_id=model_id,
-        url="https://us-south.ml.cloud.ibm.com",
-        api_key="SUa9nmwdeRB5tqo9VK0nxcwXvEM14NtnESrAP5vzy2Hf",
-        project_id="81d82fb8-fca5-4eef-8ec5-36ee556325d2",
+        url=os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com"),
+        api_key=os.getenv("WATSONX_APIKEY"),
+        project_id=os.getenv("WATSONX_PROJECT_ID"),
         params=PARAMETERS
     )
 
@@ -29,7 +32,7 @@ llama_llm = initialize_model(LLAMA_MODEL_ID)
 granite_llm = initialize_model(GRANITE_MODEL_ID)
 mistral_llm = initialize_model(MISTRAL_MODEL_ID)
 
-# Prompt template
+# Prompt templates
 llama_template = PromptTemplate(
     template='''<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 {system_prompt}\n{format_prompt}<|eot_id|><|start_header_id|>user<|end_header_id|>
@@ -50,7 +53,7 @@ mistral_template = PromptTemplate(
 
 def get_ai_response(model, template, system_prompt, user_prompt):
     chain = template | model | json_parser
-    return chain.invoke({'system_prompt':system_prompt, 'user_prompt':user_prompt, 'format_prompt': json_parser.get_format_instructions()})
+    return chain.invoke({'system_prompt': system_prompt, 'user_prompt': user_prompt, 'format_prompt': json_parser.get_format_instructions()})
 
 # Model-specific response functions
 def llama_response(system_prompt, user_prompt):
