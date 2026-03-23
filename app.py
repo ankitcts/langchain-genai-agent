@@ -38,6 +38,6 @@ def generate():
 
 if __name__ == '__main__':
     import os
-    port = int(os.getenv("PORT", 5001))
-    debug = os.getenv("FLASK_DEBUG", "true").lower() == "true"
+    port = int(os.getenv("PORT", 8080))
+    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
     app.run(debug=debug, host="0.0.0.0", port=port)
