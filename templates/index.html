@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Assistant — IBM WatsonX Multi-Model Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="logo-title">GenAI Assistant</div>
+                        <div class="logo-badge">IBM WatsonX</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-body">
+                <!-- Project Overview -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">About This Project</h3>
+                    <p class="section-text">
+                        A full-stack Generative AI application built with <strong>Flask</strong> and <strong>IBM WatsonX.ai</strong>,
+                        demonstrating multi-model LLM orchestration through a unified chat interface.
+                    </p>
+                </div>
+
+                <!-- Architecture -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Architecture</h3>
+                    <div class="arch-stack">
+                        <div class="arch-item">
+                            <span class="arch-label">Frontend</span>
+                            <span class="arch-value">HTML / CSS / JavaScript</span>
+                        </div>
+                        <div class="arch-item">
+                            <span class="arch-label">Backend</span>
+                            <span class="arch-value">Python Flask REST API</span>
+                        </div>
+                        <div class="arch-item">
+                            <span class="arch-label">AI/ML</span>
+                            <span class="arch-value">WatsonX.ai + LangChain</span>
+                        </div>
+                        <div class="arch-item">
+                            <span class="arch-label">Decoding</span>
+                            <span class="arch-value">Greedy, 256 max tokens</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Models -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Models</h3>
+                    <div class="model-cards">
+                        <div class="model-info-card">
+                            <span class="model-tag llama">Llama</span>
+                            <div class="model-info-text">
+                                <div class="model-info-name">Meta Llama 3.2 11B Vision</div>
+                                <div class="model-info-detail">Multi-modal, 11B params</div>
+                            </div>
+                        </div>
+                        <div class="model-info-card">
+                            <span class="model-tag granite">Granite</span>
+                            <div class="model-info-text">
+                                <div class="model-info-name">IBM Granite 4H Small</div>
+                                <div class="model-info-detail">Enterprise-grade</div>
+                            </div>
+                        </div>
+                        <div class="model-info-card">
+                            <span class="model-tag mistral">Mistral</span>
+                            <div class="model-info-text">
+                                <div class="model-info-name">Mistral Small 3.1 24B</div>
+                                <div class="model-info-detail">High accuracy, 24B params</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Key Features</h3>
+                    <ul class="feature-list">
+                        <li>Multi-model LLM comparison in one interface</li>
+                        <li>WatsonX.ai + LangChain SDK integration</li>
+                        <li>Real-time latency tracking per model</li>
+                        <li>Configurable decoding parameters</li>
+                        <li>Production-ready Flask REST API</li>
+                        <li>Professional dark-themed responsive UI</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-text">
+                    Built with Flask + WatsonX.ai + LangChain
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-area">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <h1 class="header-title">Chat</h1>
+                    <button id="clearBtn" class="clear-btn" style="display: none;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 6 18 0"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        </svg>
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <div class="messages-area">
+                    <div class="messages-content">
+                        <!-- Welcome Screen -->
+                        <div id="welcomeScreen" class="welcome-screen">
+                            <div class="welcome-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <h2 class="welcome-title">Start a Conversation</h2>
+                            <p class="welcome-text">
+                                Select a model and ask anything. Compare responses across Llama, Granite, and Mistral.
+                            </p>
+                        </div>
+
+                        <div id="messagesContainer" class="messages-container"></div>
+
+                        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                            <div class="loading-bubble">
+                                <div class="loading-content">
+                                    <div class="loading-dots">
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    </div>
+                                    <span class="loading-text">Generating response...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="messagesEnd"></div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-content">
+                        <form id="chatForm" class="chat-form">
+                            <div class="model-section">
+                                <span class="model-label">Model:</span>
+                                <div class="select-wrapper">
+                                    <select id="modelSelect" class="model-select">
+                                        <option value="llama">Llama 3.2 Vision</option>
+                                        <option value="granite">Granite 4H</option>
+                                        <option value="mistral">Mistral Small 3.1</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="input-section">
+                                <div class="textarea-container">
+                                    <textarea
+                                        id="messageInput"
+                                        class="message-textarea"
+                                        placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+                                        rows="1"
+                                    ></textarea>
+                                </div>
+                                <button type="submit" id="sendButton" class="send-button">
+                                    <svg id="sendIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                                    </svg>
+                                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
