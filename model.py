@@ -18,19 +18,23 @@ class AIResponse(BaseModel):
 # JSON output parser
 json_parser = JsonOutputParser(pydantic_object=AIResponse)
 
+# Lazy-loaded models (initialized on first request, not at import time)
+_models = {}
 
-def initialize_model(model_id):
-    return ChatWatsonx(
-        model_id=model_id,
-        url=os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com"),
-        api_key=os.getenv("WATSONX_APIKEY"),
-        project_id=os.getenv("WATSONX_PROJECT_ID"),
-        params=PARAMETERS
-    )
-
-llama_llm = initialize_model(LLAMA_MODEL_ID)
-granite_llm = initialize_model(GRANITE_MODEL_ID)
-mistral_llm = initialize_model(MISTRAL_MODEL_ID)
+def get_model(model_id):
+    """Get or create a ChatWatsonx model instance (lazy singleton)."""
+    if model_id not in _models:
+        api_key = os.getenv("WATSONX_APIKEY")
+        if not api_key:
+            raise ValueError("WATSONX_APIKEY environment variable not set")
+        _models[model_id] = ChatWatsonx(
+            model_id=model_id,
+            url=os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com"),
+            api_key=api_key,
+            project_id=os.getenv("WATSONX_PROJECT_ID"),
+            params=PARAMETERS
+        )
+    return _models[model_id]
 
 # Prompt templates
 llama_template = PromptTemplate(
@@ -57,10 +61,10 @@ def get_ai_response(model, template, system_prompt, user_prompt):
 
 # Model-specific response functions
 def llama_response(system_prompt, user_prompt):
-    return get_ai_response(llama_llm, llama_template, system_prompt, user_prompt)
+    return get_ai_response(get_model(LLAMA_MODEL_ID), llama_template, system_prompt, user_prompt)
 
 def granite_response(system_prompt, user_prompt):
-    return get_ai_response(granite_llm, granite_template, system_prompt, user_prompt)
+    return get_ai_response(get_model(GRANITE_MODEL_ID), granite_template, system_prompt, user_prompt)
 
 def mistral_response(system_prompt, user_prompt):
-    return get_ai_response(mistral_llm, mistral_template, system_prompt, user_prompt)
+    return get_ai_response(get_model(MISTRAL_MODEL_ID), mistral_template, system_prompt, user_prompt)
