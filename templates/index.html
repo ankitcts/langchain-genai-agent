@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>GenAI Assistant — IBM WatsonX Multi-Model Chat</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -223,6 +225,20 @@
         function closeMobileInfo() {
             document.getElementById('mobileOverlay').classList.remove('active');
             document.getElementById('mobileInfoPopup').classList.remove('active');
+        }
+
+        // Fix iOS Safari viewport height when keyboard opens
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                document.documentElement.style.setProperty(
+                    '--vh', window.visualViewport.height + 'px'
+                );
+                // Scroll input into view when keyboard opens
+                const input = document.getElementById('messageInput');
+                if (document.activeElement === input) {
+                    setTimeout(() => input.scrollIntoView({ block: 'end', behavior: 'smooth' }), 100);
+                }
+            });
         }
     </script>
 </body>
